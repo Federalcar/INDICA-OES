@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Indicações</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: center;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            padding: 15px 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #495057;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-btn.active {
+            color: #4facfe;
+            border-bottom-color: #4facfe;
+            background: white;
+        }
+
+        .nav-btn:hover {
+            background: #e9ecef;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #343a40;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .link-box {
+            background: #f8f9fa;
+            border: 2px dashed #4facfe;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .link-box input {
+            background: white;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            width: 100%;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pendente {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-fechado {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-perdido {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav {
+                flex-direction: column;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Sistema de Indicações</h1>
+            <p>Ganhe bonificações indicando novos clientes para nossos serviços</p>
+        </div>
+
+        <div class="nav">
+            <button class="nav-btn active" onclick="showSection('home')">🏠 Início</button>
+            <button class="nav-btn" onclick="showSection('indicar')">➕ Fazer Indicação</button>
+            <button class="nav-btn" onclick="showSection('dashboard')">📊 Dashboard</button>
+            <button class="nav-btn" onclick="showSection('gerenciar')">⚙️ Gerenciar</button>
+        </div>
+
+        <div class="content">
+            <!-- Seção Início -->
+            <div id="home" class="section active">
+                <div class="grid-2">
+                    <div>
+                        <h2>💰 Como Funciona o Programa</h2>
+                        <div class="card">
+                            <h3>1. Gere seu Link Personalizado</h3>
+                            <p>Crie um link único com seu nome para compartilhar com seus contatos.</p>
+                        </div>
+                        <div class="card">
+                            <h3>2. Compartilhe com Amigos</h3>
+                            <p>Envie seu link para pessoas que podem se interessar pelos nossos serviços.</p>
+                        </div>
+                        <div class="card">
+                            <h3>3. Receba Bonificações</h3>
+                            <p>Quando sua indicação fechar contrato, você recebe sua bonificação!</p>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h2>🔗 Gerar Link de Indicação</h2>
+                        <div class="card">
+                            <div class="form-group">
+                                <label>Seu Nome Completo:</label>
+                                <input type="text" id="nomeIndicador" class="form-control" placeholder="Digite seu nome completo">
+                            </div>
+                            <div class="form-group">
+                                <label>Seu E-mail:</label>
+                                <input type="email" id="emailIndicador" class="form-control" placeholder="seu@email.com">
+                            </div>
+                            <div class="form-group">
+                                <label>Seu Telefone:</label>
+                                <input type="tel" id="telefoneIndicador" class="form-control" placeholder="(11) 99999-9999">
+                            </div>
+                            <button class="btn" onclick="gerarLink()">🔗 Gerar Meu Link</button>
+                        </div>
+                        
+                        <div id="linkGerado" class="link-box" style="display: none;">
+                            <h3>🎉 Seu Link Personalizado:</h3>
+                            <input type="text" id="linkPersonalizado" readonly onclick="this.select()">
+                            <br>
+                            <button class="btn btn-secondary" onclick="copiarLink()">📋 Copiar Link</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção Fazer Indicação -->
+            <div id="indicar" class="section">
+                <h2>➕ Fazer Nova Indicação</h2>
+                <div id="alertIndicacao"></div>
+                
+                <div class="grid-2">
+                    <div class="card">
+                        <h3>📝 Dados do Indicador</h3>
+                        <div class="form-group">
+                            <label>Seu Nome:</label>
+                            <input type="text" id="nomeIndicadorForm" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Seu E-mail:</label>
+                            <input type="email" id="emailIndicadorForm" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Seu Telefone:</label>
+                            <input type="tel" id="telefoneIndicadorForm" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>👤 Dados do Indicado</h3>
+                        <div class="form-group">
+                            <label>Nome do Indicado:</label>
+                            <input type="text" id="nomeIndicado" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>E-mail do Indicado:</label>
+                            <input type="email" id="emailIndicado" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Telefone do Indicado:</label>
+                            <input type="tel" id="telefoneIndicado" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Serviço de Interesse:</label>
+                            <select id="servicoIndicado" class="form-control">
+                                <option value="">Selecione o serviço</option>
+                                <option value="protecao-veicular">🚗 Proteção Veicular</option>
+                                <option value="assistencia-saude">🏥 Assistência Saúde</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn" onclick="salvarIndicacao()">💾 Registrar Indicação</button>
+                </div>
+            </div>
+
+            <!-- Seção Dashboard -->
+            <div id="dashboard" class="section">
+                <h2>📊 Dashboard de Indicações</h2>
+                
+                <div class="stats" id="estatisticas">
+                    <!-- Estatísticas serão inseridas aqui -->
+                </div>
+
+                <h3>📋 Suas Indicações</h3>
+                <div id="listaIndicacoes">
+                    <!-- Lista de indicações será inserida aqui -->
+                </div>
+            </div>
+
+            <!-- Seção Gerenciar -->
+            <div id="gerenciar" class="section">
+                <h2>⚙️ Gerenciar Indicações</h2>
+                
+                <div class="card">
+                    <h3>🔄 Atualizar Status das Indicações</h3>
+                    <div id="listaGerenciar">
+                        <!-- Lista para gerenciar será inserida aqui -->
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🗑️ Limpar Dados</h3>
+                    <p>⚠️ Esta ação irá apagar todas as indicações registradas. Use com cuidado!</p>
+                    <button class="btn btn-danger" onclick="limparDados()">🗑️ Limpar Todos os Dados</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sistema de armazenamento local
+        const DB_KEY = 'indicacoes_sistema';
+        const INDICADORES_KEY = 'indicadores_cadastrados';
+
+        // Funções de persistência
+        function salvarIndicacoes(indicacoes) {
+            localStorage.setItem(DB_KEY, JSON.stringify(indicacoes));
+        }
+
+        function carregarIndicacoes() {
+            const dados = localStorage.getItem(DB_KEY);
+            return dados ? JSON.parse(dados) : [];
+        }
+
+        function salvarIndicadores(indicadores) {
+            localStorage.setItem(INDICADORES_KEY, JSON.stringify(indicadores));
+        }
+
+        function carregarIndicadores() {
+            const dados = localStorage.getItem(INDICADORES_KEY);
+            return dados ? JSON.parse(dados) : [];
+        }
+
+        // Navegação
+        function showSection(sectionId) {
+            // Esconder todas as seções
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => section.classList.remove('active'));
+            
+            // Remover active dos botões
+            const buttons = document.querySelectorAll('.nav-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // Mostrar seção selecionada
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Atualizar dashboard se necessário
+            if (sectionId === 'dashboard') {
+                atualizarDashboard();
+            }
+            
+            if (sectionId === 'gerenciar') {
+                atualizarGerenciar();
+            }
+        }
+
+        // Gerar link personalizado
+        function gerarLink() {
+            const nome = document.getElementById('nomeIndicador').value.trim();
+            const email = document.getElementById('emailIndicador').value.trim();
+            const telefone = document.getElementById('telefoneIndicador').value.trim();
+            
+            if (!nome || !email || !telefone) {
+                alert('⚠️ Preencha todos os campos para gerar seu link!');
+                return;
+            }
+            
+            // Salvar indicador
+            const indicadores = carregarIndicadores();
+            const indicadorExistente = indicadores.find(ind => ind.email === email);
+            
+            if (!indicadorExistente) {
+                indicadores.push({
+                    nome: nome,
+                    email: email,
+                    telefone: telefone,
+                    dataCadastro: new Date().toISOString()
+                });
+                salvarIndicadores(indicadores);
+            }
+            
+            // Gerar link
+            const nomeUrl = nome.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+            const baseUrl = window.location.href.split('?')[0];
+            const link = `${baseUrl}?ref=${nomeUrl}&email=${encodeURIComponent(email)}`;
+            
+            document.getElementById('linkPersonalizado').value = link;
+            document.getElementById('linkGerado').style.display = 'block';
+            
+            // Preencher formulário de indicação
+            document.getElementById('nomeIndicadorForm').value = nome;
+            document.getElementById('emailIndicadorForm').value = email;
+            document.getElementById('telefoneIndicadorForm').value = telefone;
+        }
+
+        // Copiar link
+        function copiarLink() {
+            const linkInput = document.getElementById('linkPersonalizado');
+            linkInput.select();
+            document.execCommand('copy');
+            alert('🎉 Link copiado para a área de transferência!');
+        }
+
+        // Salvar indicação
+        function salvarIndicacao() {
+            const nomeIndicador = document.getElementById('nomeIndicadorForm').value.trim();
+            const emailIndicador = document.getElementById('emailIndicadorForm').value.trim();
+            const telefoneIndicador = document.getElementById('telefoneIndicadorForm').value.trim();
+            const nomeIndicado = document.getElementById('nomeIndicado').value.trim();
+            const emailIndicado = document.getElementById('emailIndicado').value.trim();
+            const telefoneIndicado = document.getElementById('telefoneIndicado').value.trim();
+            const servico = document.getElementById('servicoIndicado').value;
+            
+            // Validação
+            if (!nomeIndicador || !emailIndicador || !telefoneIndicador || !nomeIndicado || !emailIndicado || !telefoneIndicado || !servico) {
+                mostrarAlerta('alertIndicacao', '⚠️ Preencha todos os campos!', 'error');
+                return;
+            }
+            
+            // Salvar indicação
+            const indicacoes = carregarIndicacoes();
+            const novaIndicacao = {
+                id: Date.now(),
+                indicador: {
+                    nome: nomeIndicador,
+                    email: emailIndicador,
+                    telefone: telefoneIndicador
+                },
+                indicado: {
+                    nome: nomeIndicado,
+                    email: emailIndicado,
+                    telefone: telefoneIndicado
+                },
+                servico: servico,
+                data: new Date().toISOString(),
+                status: 'pendente'
+            };
+            
+            indicacoes.push(novaIndicacao);
+            salvarIndicacoes(indicacoes);
+            
+            // Limpar formulário
+            document.getElementById('nomeIndicado').value = '';
+            document.getElementById('emailIndicado').value = '';
+            document.getElementById('telefoneIndicado').value = '';
+            document.getElementById('servicoIndicado').value = '';
+            
+            mostrarAlerta('alertIndicacao', '🎉 Indicação registrada com sucesso!', 'success');
+        }
+
+        // Mostrar alerta
+        function mostrarAlerta(elementId, mensagem, tipo) {
+            const alertDiv = document.getElementById(elementId);
+            alertDiv.innerHTML = `<div class="alert alert-${tipo === 'success' ? 'success' : 'error'}">${mensagem}</div>`;
+            setTimeout(() => {
+                alertDiv.innerHTML = '';
+            }, 5000);
+        }
+
+        // Atualizar dashboard
+        function atualizarDashboard() {
+            const indicacoes = carregarIndicacoes();
+            
+            // Estatísticas
+            const totalIndicacoes = indicacoes.length;
+            const indicacoesFechadas = indicacoes.filter(ind => ind.status === 'fechado').length;
+            const indicacoesPendentes = indicacoes.filter(ind => ind.status === 'pendente').length;
+            const indicacoesPerdidas = indicacoes.filter(ind => ind.status === 'perdido').length;
+            
+            const statsHtml = `
+                <div class="stat-card">
+                    <div class="stat-number">${totalIndicacoes}</div>
+                    <div class="stat-label">Total de Indicações</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${indicacoesFechadas}</div>
+                    <div class="stat-label">Contratos Fechados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${indicacoesPendentes}</div>
+                    <div class="stat-label">Pendentes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${indicacoesPerdidas}</div>
+                    <div class="stat-label">Perdidas</div>
+                </div>
+            `;
+            
+            document.getElementById('estatisticas').innerHTML = statsHtml;
+            
+            // Lista de indicações
+            let listaHtml = '';
+            if (indicacoes.length === 0) {
+                listaHtml = '<div class="card"><p>Nenhuma indicação registrada ainda.</p></div>';
+            } else {
+                indicacoes.forEach(indicacao => {
+                    const data = new Date(indicacao.data).toLocaleDateString('pt-BR');
+                    const servicoNome = indicacao.servico === 'protecao-veicular' ? '🚗 Proteção Veicular' : '🏥 Assistência Saúde';
+                    
+                    listaHtml += `
+                        <div class="card">
+                            <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 10px;">
+                                <h4>${indicacao.indicado.nome}</h4>
+                                <span class="status-badge status-${indicacao.status}">${indicacao.status}</span>
+                            </div>
+                            <p><strong>Serviço:</strong> ${servicoNome}</p>
+                            <p><strong>E-mail:</strong> ${indicacao.indicado.email}</p>
+                            <p><strong>Telefone:</strong> ${indicacao.indicado.telefone}</p>
+                            <p><strong>Indicado por:</strong> ${indicacao.indicador.nome}</p>
+                            <p><strong>Data:</strong> ${data}</p>
+                        </div>
+                    `;
+                });
+            }
+            
+            document.getElementById('listaIndicacoes').innerHTML = listaHtml;
+        }
+
+        // Atualizar seção gerenciar
+        function atualizarGerenciar() {
+            const indicacoes = carregarIndicacoes();
+            
+            let listaHtml = '';
+            if (indicacoes.length === 0) {
+                listaHtml = '<p>Nenhuma indicação para gerenciar.</p>';
+            } else {
+                indicacoes.forEach(indicacao => {
+                    const data = new Date(indicacao.data).toLocaleDateString('pt-BR');
+                    const servicoNome = indicacao.servico === 'protecao-veicular' ? '🚗 Proteção Veicular' : '🏥 Assistência Saúde';
+                    
+                    listaHtml += `
+                        <div class="card">
+                            <h4>${indicacao.indicado.nome}</h4>
+                            <p><strong>Serviço:</strong> ${servicoNome}</p>
+                            <p><strong>Indicado por:</strong> ${indicacao.indicador.nome}</p>
+                            <p><strong>Data:</strong> ${data}</p>
+                            <p><strong>Status atual:</strong> <span class="status-badge status-${indicacao.status}">${indicacao.status}</span></p>
+                            
+                            <div style="margin-top: 15px;">
+                                <select id="status-${indicacao.id}" class="form-control" style="width: auto; display: inline-block; margin-right: 10px;">
+                                    <option value="pendente" ${indicacao.status === 'pendente' ? 'selected' : ''}>Pendente</option>
+                                    <option value="fechado" ${indicacao.status === 'fechado' ? 'selected' : ''}>Fechado</option>
+                                    <option value="perdido" ${indicacao.status === 'perdido' ? 'selected' : ''}>Perdido</option>
+                                </select>
+                                <button class="btn btn-secondary" onclick="atualizarStatus(${indicacao.id})">Atualizar</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            
+            document.getElementById('listaGerenciar').innerHTML = listaHtml;
+        }
+
+        // Atualizar status de uma indicação
+        function atualizarStatus(id) {
+            const novoStatus = document.getElementById(`status-${id}`).value;
+            const indicacoes = carregarIndicacoes();
+            
+            const indicacao = indicacoes.find(ind => ind.id === id);
+            if (indicacao) {
+                indicacao.status = novoStatus;
+                salvarIndicacoes(indicacoes);
+                alert('✅ Status atualizado com sucesso!');
+                atualizarGerenciar();
+            }
+        }
+
+        // Limpar todos os dados
+        function limparDados() {
+            if (confirm('⚠️ Tem certeza que deseja apagar TODOS os dados? Esta ação não pode ser desfeita!')) {
+                localStorage.removeItem(DB_KEY);
+                localStorage.removeItem(INDICADORES_KEY);
+                alert('🗑️ Todos os dados foram apagados!');
+                location.reload();
+            }
+        }
+
+        // Verificar parâmetros da URL ao carregar
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const ref = urlParams.get('ref');
+            const email = urlParams.get('email');
+            
+            if (ref && email) {
+                // Buscar dados do indicador
+                const indicadores = carregarIndicadores();
+                const indicador = indicadores.find(ind => ind.email === decodeURIComponent(email));
+                
+                if (indicador) {
+                    // Preencher dados do indicador
+                    document.getElementById('nomeIndicadorForm').value = indicador.nome;
+                    document.getElementById('emailIndicadorForm').value = indicador.email;
+                    document.getElementById('telefoneIndicadorForm').value = indicador.telefone;
+                    
+                    // Ir para seção de indicação
+                    showSection('indicar');
+                    document.querySelector('[onclick="showSection(\'indicar\')"]').classList.add('active');
+                    document.querySelector('[onclick="showSection(\'home\')"]').classList.remove('active');
+                }
+            }
+        };
+    </script>
+</body>
+</html>
